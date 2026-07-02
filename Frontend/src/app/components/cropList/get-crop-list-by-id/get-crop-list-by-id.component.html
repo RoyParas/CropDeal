@@ -1,0 +1,87 @@
+<div class="container my-5">
+  <div *ngIf="loading" class="d-flex justify-content-center align-items-center" style="height: 200px;">
+    <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <div *ngIf="errorMessage" class="my-3 d-flex justify-content-between align-items-center alert alert-danger show" role="alert">
+    <div class="text-center me-3">{{ errorMessage }}</div>
+    <button type="button" class="btn btn-sm btn-danger" (click)="closeError()"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+
+  <div *ngIf="product && !errorMessage"  class="rounded-3 border-0 card shadow">
+    <div class="row g-0">
+      <!-- Image Section -->
+      <div class="col-md-4 d-flex align-items-center justify-content-center bg-light">
+        <img [src]="product.imageUrl" loading="lazy" class="img-fluid p-3 rounded" [alt]="product.crop.name" style="max-height: 200px;" />
+      </div>
+
+      <!-- Product Details -->
+      <div class="col-md-8">
+        <div class="card-body">
+          <div class="d-flex align-items-center">
+            <h2 class="card-title text-primary me-4">
+              {{ product.crop.name }} <small class="text-muted">({{ product.crop.type }})</small>
+            </h2>
+            <span class="badge" [ngClass]="product.availabilityStatus ? 'bg-success' : 'bg-danger'">
+              {{ product.availabilityStatus ? 'In Stock' : 'Out of Stock' }}
+            </span>
+          </div>
+          <p class="card-text"><strong>Description:</strong> {{ product.description }}</p>
+          <p class="card-text"><strong>Price:</strong> ₹{{ product.pricePerKg }}/Kg</p>
+          <p class="card-text"><strong>Available Quantity:</strong> {{ product.quantityInKg }} Kg</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Farmer Details -->
+    <div class="card-footer bg-white mt-3">
+      <div class="d-flex align-items-start">
+        <h4 class="text-secondary me-5">Farmer Details</h4>
+        <span class="badge" [ngClass]="product.farmer.isActive ? 'bg-success' : 'bg-secondary'">
+          {{ product.farmer.isActive ? 'Active' : 'InActive' }}
+        </span>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <p><strong>Name:</strong> {{ product.farmer.fullName }}</p>
+          <p><strong>Phone Number:</strong> {{ product.farmer.phoneNumber }}</p>
+        </div>
+        <div class="col-md-6">
+          <p><strong>Email:</strong> {{ product.farmer.email }}</p>
+          <p><strong>Role:</strong> {{ product.farmer.role }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="text-center my-4">
+    <button *ngIf="getRole() == 'Dealer' && !isBuyClicked && !errorMessage" class="btn btn-outline-success me-4" (click)="isBuyClicked = true"><i class="fa-solid fa-bag-shopping"></i> Buy</button>
+    <button class="btn btn-outline-primary" (click)="goBack()"><i class="fa-solid fa-circle-arrow-left"></i> Go Back</button>
+  </div>
+
+  <!-- Initiate Transaction Form -->
+  <div>
+    <form *ngIf="isBuyClicked" (ngSubmit)="initiateTransaction(product.id)"  class="mt-4 d-flex flex-column flex-lg-row row-gap-2 align-items-stretch align-items-lg-center justify-content-lg-between">
+      <div class="form-group d-flex justify-content-between">
+        <label for="name" class="col-form-label me-lg-2">Quantity in kg you like to buy:</label>
+        <input type="number" id="quantity" name="quantity" class="form-control shadow-none border border-3" style="width: 100px;" required [(ngModel)]="quantity"/>
+      </div>
+      <div class="form-group d-flex justify-content-between">
+        <label for="name" class="col-form-label me-lg-2">Final Price per kg you are willing to pay:</label>
+        <input type="number" id="finalPrice" name="finalPrice" class="form-control shadow-none border border-3" style="width: 100px;" required [(ngModel)]="finalPrice"/>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="text-center">
+        <button type="submit"
+                class="btn btn-success mx-2"
+                [disabled]="finalPrice <= 0 || finalPrice == undefined || finalPrice > product.pricePerKg ||
+                            quantity <= 0 || quantity == undefined || quantity > product.quantityInKg">
+          Initiate
+        </button>
+        <button class="btn btn-danger mx-2" (click)="isBuyClicked = false">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,103 @@
+<div class="container my-4">
+
+  <!-- Search and Reset -->
+  <div class="d-flex justify-content-end gap-2 align-items-baseline mb-2">
+    <div class="text-end">
+      <div class="input-group">
+        <!-- search input -->
+        <select id="name" formControlName="cropName" class="form-select shadow-none" style="outline: none;" (change)="onNameChange($event)">
+          <option value="" disabled [selected]="!cropToSearch">Select Crop Name</option>
+          <option *ngFor="let name of cropsNames" [value]="name">{{ name }}</option>
+        </select>
+
+        <!-- Search or Subscribe method -->
+        <button class="btn btn-success input-group-text" (click)="search()" [disabled]="!cropToSearch || isSearching">
+          <span *ngIf="crops.length != 0; else subscribeText"><i *ngIf="!isSearching" class="fa-solid fa-search"></i></span>
+          <ng-template #subscribeText>Subscribe</ng-template>
+          <div *ngIf="isSearching" class="spinner-border text-light spinner-border-sm" role="status"></div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Reset Button -->
+    <button class="btn btn-primary" (click)="getAvailableCrops()" [disabled]="isAll">Reset Search</button>
+  </div>
+
+  <div *ngIf="!errorMessage" class="d-flex justify-content-center">
+    <h4 *ngIf="cropsNames.length === 0" class="mt-3">No crop has been allowed by Admin</h4>
+    <h4 *ngIf="cropsNames.length != 0 && !noSearchFoundForCrop" class="mt-2 mb-4">{{crops.length != 0 ? 'Available Crops' : 'No crops have been listed'}}</h4>
+
+    <div *ngIf="noSearchFoundForCrop" class="border card shadow rounded-3" style="max-width: 500px;">
+      <div class="card-body">
+        <!-- Card Title -->
+        <h5 class="card-title text-center mb-3 fs-4">No Crops listed for {{ noSearchFoundForCrop }}</h5>
+
+        <!-- Informative Text -->
+        <div class="text-center">
+          <p class="text-secondary">When {{ noSearchFoundForCrop }} is listed, you will be notified if you subscribe.</p>
+          <p>Would you like to subscribe for {{ noSearchFoundForCrop }}?</p>
+        </div>
+
+        <!-- Buttons -->
+        <div class="d-flex justify-content-center gap-3">
+          <button class="btn btn-success px-4 py-2" (click)="subscribe()">Subscribe</button>
+          <button class="btn btn-outline-danger px-4 py-2 fw-semibold" (click)="getAvailableCrops()">No</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- loading spinner -->
+  <div *ngIf="loading" class="d-flex justify-content-center align-items-center" style="height: 200px;">
+    <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <div *ngIf="errorMessage" class="my-3 d-flex justify-content-between align-items-center alert alert-danger show" role="alert">
+    <div class="text-center me-3">{{ errorMessage }}</div>
+    <button type="button" class="btn btn-sm btn-danger" (click)="closeError()"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+
+
+  <!-- listed available crops card -->
+  <div *ngIf="!errorMessage" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-5">
+    <div class="col d-flex justify-content-center" *ngFor="let crop of crops">
+      <div class="card border shadow-sm rounded-4" style="width: 280px; height: 400px;">
+        <div class="card-img-top position-relative">
+          <img [src]="crop.imageUrl" [alt]="crop.name" class="rounded-top-4" style="width: 100%; height: 200px; object-fit: cover;" />
+          <span class="badge rounded-start-pill bg-success position-absolute end-0" style="top: 15px ;">{{crop.nearest}}</span>
+        </div>
+
+        <div class="card-body d-flex flex-column">
+          <!-- Crop Type and Crop Name -->
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h5 class="card-title fw-bold text-dark mb-0">{{ crop.name }}</h5>
+            <span class="badge bg-light text-danger border border-danger small">{{ crop.type }}</span>
+          </div>
+
+          <!-- Description -->
+          <p class="text-secondary mb-3" style="font-size: 0.9rem;">
+            {{ crop.description | slice:0:80 }}{{ crop.description.length > 80 ? '...' : '' }}
+          </p>
+
+          <!-- Price and Quantity -->
+          <div class="d-flex justify-content-between align-items-center">
+            <p class="fw-semibold text-primary">₹ {{ crop.pricePerKg }}/kg</p>
+            <p class="text-muted" style="font-size: 0.8rem;"><strong>Quantity:</strong> {{ crop.quantityInKg }} kg</p>
+          </div>
+
+          <!-- button and posted at -->
+          <div class="text-center">
+            <button class="btn btn-outline-success w-50 rounded-3 mb-2"
+                    (click)="getCropListById(crop.listingId)">
+              <i class="fa-solid fa-bag-shopping me-1"></i> Buy
+            </button>
+            <p class="text-end text-secondary fw-semibold" style="font-size: 0.8rem;"><small>Posted  {{ getTimeAgo(crop.postedAt) }}</small></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

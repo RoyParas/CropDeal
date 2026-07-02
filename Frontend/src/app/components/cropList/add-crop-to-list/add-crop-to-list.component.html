@@ -1,0 +1,107 @@
+<div class="container mt-3">
+  <div *ngIf="loading" class="d-flex justify-content-center align-items-center" style="height: 200px;">
+    <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <div *ngIf="!loading" class="d-flex justify-content-center align-items-center">
+    <div class="d-none d-md-block text-center">
+      <img [src]="listCrop" alt="image of farmer" class="w-75" style="object-fit:cover;">
+    </div>
+    <div class="col-md-6 col-lg-5">
+      <div class="card shadow-lg border-0">
+        <div class="card-header bg-success text-white text-center py-3">
+          <h4 class="mb-0">🧺 List Your Crop</h4>
+        </div>
+        <div class="card-body p-4">
+          <form [formGroup]="cropForm" (ngSubmit)="onSubmit()" enctype="multipart/form-data" novalidate>
+
+            <!-- Crop Type -->
+            <div  class="px-1 mb-2" style="max-height: 50vh; overflow-y: scroll;">
+              <div class="mb-2" >
+                <label for="type" class="form-label">Crop Type</label>
+                <select id="type" formControlName="type" class="form-select" (change)="loadName($event)">
+                  <option value="" disabled selected>Select Crop Type</option>
+                  <option *ngFor="let type of cropTypes" [value]="type">{{ type }}</option>
+                </select>
+                <div *ngIf="cropForm.get('type')?.invalid && cropForm.get('type')?.touched" class="text-danger small">
+                  *Crop type is required
+                </div>
+              </div>
+
+              <!-- Crop Name -->
+              <div class="mb-2">
+                <label for="name" class="form-label">Crop Name</label>
+                <select id="name" formControlName="name" class="form-select">
+                  <option value="" disabled selected>Select Crop Name</option>
+                  <option *ngFor="let name of cropNames" [value]="name">{{ name }}</option>
+                </select>
+                <div *ngIf="cropForm.get('name')?.invalid && cropForm.get('name')?.touched" class="text-danger small">
+                  *Crop name is required
+                </div>
+              </div>
+
+              <!-- Price Per Kg -->
+              <div class="mb-2">
+                <label for="pricePerKg" class="form-label">Price Per Kg</label>
+                <input id="pricePerKg" formControlName="pricePerKg" type="number" class="form-control" placeholder="e.g. 45" />
+                <div *ngIf="cropForm.get('pricePerKg')?.invalid && cropForm.get('pricePerKg')?.touched" class="text-danger small">
+                  <div *ngIf="cropForm.get('pricePerKg')?.errors?.['required']">
+                    *Price per kg is required
+                  </div>
+                  <div *ngIf="cropForm.get('pricePerKg')?.errors?.['min']">
+                    *Price must be greater than 0
+                  </div>
+                </div>
+              </div>
+
+              <!-- Quantity In Kg -->
+              <div class="mb-2">
+                <label for="quantityInKg" class="form-label">Quantity (Kg)</label>
+                <input id="quantityInKg" formControlName="quantityInKg" type="number" class="form-control" placeholder="e.g. 500" />
+                <div *ngIf="cropForm.get('quantityInKg')?.invalid && cropForm.get('quantityInKg')?.touched" class="text-danger small">
+                  <div *ngIf="cropForm.get('quantityInKg')?.errors?.['required']">
+                    *Quantity is required
+                  </div>
+                  <div *ngIf="cropForm.get('quantityInKg')?.errors?.['min']">
+                    *Quantity must be greater than 0
+                  </div>
+                </div>
+              </div>
+
+              <!-- Description -->
+              <div class="mb-2">
+                <label for="description" class="form-label">Description</label>
+                <textarea id="description" formControlName="description" class="form-control" rows="2" placeholder="Describe your crop..."></textarea>
+                <div *ngIf="cropForm.get('description')?.invalid && cropForm.get('description')?.touched" class="text-danger small">
+                  <div *ngIf="cropForm.get('description')?.errors?.['required']">
+                    *Description is required
+                  </div>
+                </div>
+              </div>
+
+              <!-- Image Upload -->
+              <div class="mb-2">
+                <label for="image" class="form-label">Upload Crop Image</label>
+                <input id="image" type="file" (change)="onFileChange($event)" class="form-control" />
+                <div *ngIf="imageInvalid" class="text-danger small">Image is required</div>
+              </div>
+            </div>
+
+            <p *ngIf="errorMessage" class="text-danger text-center">{{ errorMessage }}</p>
+
+            <div class="d-flex justify-content-evenly">
+              <button type="submit" class="btn btn-success" [disabled]="cropForm.invalid || !selectedFile || submitting">
+                <span *ngIf="submitting" class="spinner-border spinner-border-sm"></span>
+                {{ submitting ? 'submitting...' : '📤 Submit Listing ' }}
+              </button>
+              <button class="btn btn-outline-primary" (click)="goBack()"><i class="fa-solid fa-circle-arrow-left"></i> Go Back</button>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

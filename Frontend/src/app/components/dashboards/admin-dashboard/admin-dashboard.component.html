@@ -1,0 +1,15 @@
+<div class="container my-4">
+    <h2 class="text-center fw-bold mb-4 text-success">Hello Admin 👋</h2>
+
+    <div class="row g-4 text-center">
+        <div *ngFor="let item of dashBoardDto" class="col-12 col-md-6 col-lg-4">
+            <div class="card dashboard-card h-100">
+                <div class="card-body">
+                    <i [ngClass]="item.icon + ' fa-3x text-light mb-3'"></i>
+                    <h6 class="card-title fw-semibold">{{item.title}}</h6>
+                    <p class="display-6 text-light fw-bold">{{item.value}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

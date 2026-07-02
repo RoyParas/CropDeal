@@ -1,0 +1,150 @@
+<div class="container mt-3">
+
+  <!-- Loading Spinner -->
+  <div *ngIf="isLoading" class="d-flex justify-content-center align-items-center" style="height: 200px;">
+    <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="errorMessage" class="my-3 d-flex justify-content-between align-items-center alert alert-danger shadow-sm rounded-3 fade show" role="alert">
+    <div class="d-flex align-items-center">
+      <i class="fas fa-exclamation-triangle me-2"></i>
+      <div class="text-center">{{ errorMessage }}</div>
+    </div>
+    <button type="button" class="btn-close btn-close-white" (click)="closeError()"></button>
+  </div>
+
+  <!-- User Details Section -->
+  <div *ngIf="user && !errorMessage" class="row">
+    <div class="col-md-12">
+      <!-- User Details -->
+      <div>
+        <h3 class="my-2 text-success text-decoration-underline">User Details</h3>
+        <div class="row">
+          <div class="d-flex flex-column flex-md-row mb-2">
+            <div class="col-md-6 d-flex d-md-block">
+              <div class="fw-bold col-6 d-md-inline">Activity Status: </div>
+              <div class="badge d-md-inline" [ngStyle]="{'background-color': user.isActive ? 'green' : 'lightcoral'}">
+                {{ user.isActive ? 'Active' : 'Inactive' }}
+              </div>
+            </div>
+            <div class="col-md-6 d-flex d-md-block">
+              <div class="fw-bold col-6 d-md-inline">Role: </div>
+              <div class="d-md-inline">{{ user.role }}</div>
+            </div>
+          </div>
+          <hr class="m-0">
+          <div class="d-flex flex-column flex-md-row my-2">
+            <div class="col-md-6 d-flex d-md-block">
+              <div class="fw-bold col-6 d-md-inline">Full Name: </div>
+              <div class="d-md-inline">{{ user.fullName }}</div>
+            </div>
+            <div class="col-md-6 d-flex d-md-block">
+              <div class="fw-bold col-6 d-md-inline">Email: </div>
+              <div class="d-md-inline">{{ user.email }}</div>
+            </div>
+          </div>
+          <hr class="m-0">
+          <div class="d-flex flex-column flex-md-row my-2">
+            <div class="col-md-6 d-flex d-md-block">
+              <div class="fw-bold col-6 d-md-inline">Phone Number: </div>
+              <div class="d-md-inline">{{ user.phoneNumber }}</div>
+            </div>
+            <div *ngIf="user.role === 'Farmer'" class="col-md-6 d-flex d-md-block">
+              <div class="fw-bold col-6 d-md-inline">Average Rating: </div>
+              <div class="d-md-inline">{{ user.averageRating }}/5 ⭐</div>
+            </div>
+          </div>
+          <hr>
+        </div>
+      </div>
+
+      <!-- Bank Account Details -->
+      <div *ngIf="user.role != 'Admin' && user.bankAccount" class="my-2">
+        <h3 class="my-2 text-success text-decoration-underline">Bank Account Details</h3>
+        <div class="row">
+          <div class="d-flex flex-column flex-md-row mb-2">
+            <div class="col-md-6 d-flex d-md-block">
+              <div class="fw-bold col-6 d-md-inline">Bank Name: </div>
+              <div class="d-md-inline">{{ user.bankAccount.bankName }}</div>            
+            </div>
+            <div class="col-md-6 d-flex d-md-block">
+              <div class="fw-bold col-6 d-md-inline">Branch Name: </div>
+              <div class="d-md-inline">{{ user.bankAccount.branchName }}</div>
+            </div>
+          </div>
+          <hr class="m-0">
+          <div class="d-flex flex-column flex-md-row my-2">
+            <div class="col-md-6 d-flex d-md-block">
+              <div class="fw-bold col-6 d-md-inline">IFSC Code: </div>
+              <div class="d-md-inline">{{ user.bankAccount.ifscCode }}</div>
+            </div>
+            <div class="col-md-6 d-flex d-md-block">
+              <div class="fw-bold col-6 d-md-inline">Account Number: </div>
+              <div class="d-md-inline">{{ user.bankAccount.accountNumber  }}</div>
+            </div>
+          </div>
+          <hr>
+        </div>
+      </div>
+
+      <!-- Address Details -->
+      <div *ngIf="user.role != 'Admin' && user.address" class="mb-2">
+        <h3 class="my-2 text-success text-decoration-underline">Address Details</h3>
+        <div class="row">
+          <div class="d-flex flex-column flex-md-row mb-2">
+            <div class="col-md-6 d-flex d-md-block">
+              <div class="fw-bold col-6 d-md-inline">State: </div>
+              <div class="d-md-inline">{{ user.address.state }}</div>
+            </div>
+            <div class="col-md-6 d-flex d-md-block">
+              <div class="fw-bold col-6 d-md-inline">District: </div>
+              <div class="d-md-inline">{{ user.address.district }}</div>
+            </div>
+          </div>
+          <hr class="m-0">
+          <div class="d-flex flex-column flex-md-row my-2">
+            <div class="col-md-6 d-flex d-md-block">
+              <div class="fw-bold col-6 d-md-inline">Location: </div>
+              <div class="d-md-inline">{{ user.address.location }}</div>
+            </div>
+            <div class="col-md-6 d-flex d-md-block">
+              <div class="fw-bold col-6 d-md-inline">ZipCode: </div>
+              <div class="d-md-inline">{{ user.address.zipCode }}</div>
+            </div>
+          </div>
+          <hr class="m-0">
+          <div class="d-flex flex-column flex-md-row my-2">
+            <div class="col-md-6 d-flex d-md-block">
+              <div class="fw-bold col-6 d-md-inline">City: </div>
+              <div class="d-md-inline">{{ user.address.city }}</div>
+            </div>
+          </div>
+          <hr>
+        </div>
+      </div>
+
+      <h6 class="my-2 text-danger" *ngIf="user.role != 'Admin' && !user.bankAccount">
+        {{user.fullName}} has not added Bank Account details
+      </h6>
+      
+      <h6 class="my-2 text-danger" *ngIf="user.role != 'Admin' && !user.address">
+        {{user.fullName}} has not added Address details
+      </h6>
+    </div>
+    <div class="mb-3 text-center">
+      <button class="btn btn-dark mx-4"
+              (click)="goBack()">
+        <i class="fa-solid fa-circle-arrow-left"></i> Go Back
+      </button>
+      <button *ngIf="user.role !== 'Admin'" class="btn btn-success mx-4" (click)="generateReport()">
+        <span *ngIf="downloading">
+          <span class="spinner-border spinner-border-sm"></span> Downloading...
+        </span>
+        <span *ngIf="!downloading"><i class="fa-solid fa-download"></i> Download Report</span>
+      </button>
+    </div>
+  </div>
+</div>

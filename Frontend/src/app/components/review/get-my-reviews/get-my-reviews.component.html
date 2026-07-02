@@ -1,0 +1,47 @@
+<div class="container mt-5">
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="d-flex justify-content-center align-items-center" style="height: 200px;">
+    <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <!-- Crop List -->
+  <div *ngIf="!loading">
+
+    <!-- Error Message -->
+    <div *ngIf="errorMessage" class="my-3 d-flex justify-content-between align-items-center alert alert-danger show" role="alert";>
+      {{ errorMessage }}
+    </div>
+
+    <div *ngIf="reviews.length === 0" class="d-flex justify-content-center">
+      <h4 class="text-center">No reviews have been added</h4>
+    </div>
+
+
+    <!-- Table for displaying crops -->
+    <div *ngIf="reviews.length != 0" class="card shadow border rounded-4 mt-4">
+      <div class="card-body table-responsive">
+        <table class="table table-hover text-center">
+          <thead>
+            <tr class="small">
+              <th scope="col" style="width: 30%;">Transaction Id</th>
+              <th scope="col" style="width: 30%;">Dealer Id</th>
+              <th scope="col" style="width: 30%;">Comment</th>
+              <th scope="col" style="width: 10%;">Rating</th>
+            </tr>
+          </thead>
+          <tbody class="table-group-divider">
+            <tr *ngFor="let review of reviews" class="align-middle small">
+              <td>{{ review.transactionId | shortenId }}</td>
+              <td>{{ review.dealerId  | shortenId}}</td>
+              <td>{{ review.comment }}</td>
+              <td class="fs-6">{{review.rating}}/5 <i class="bi bi-star-fill text-warning"></i></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+

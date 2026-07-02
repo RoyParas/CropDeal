@@ -1,0 +1,112 @@
+<div class="container mt-4 w-full">
+  <div class="d-flex align-items-center justify-content-evenly">
+    <!-- Form Column -->
+    <div class="col-lg-4 col-md-7 col-9">
+      <div class="card px-4 shadow-lg rounded-lg" >
+        <div class="text-center mb-2">
+            <img [src]="logo" alt="App Logo" style="width: 100px;">
+             <h5 class="text-center medium">Create an Account</h5>
+        </div>
+
+        <form [formGroup]="form" (ngSubmit)="submit()">
+          <div class="px-1 mb-2" style="max-height: 36vh; overflow-y: scroll;">
+            <!-- Full Name -->
+            <div class="mb-2">
+              <label for="fullName" class="form-label">Full Name</label>
+              <input
+                type="text"
+                id="fullName"
+                class="form-control"
+                formControlName="fullName"
+                placeholder="Enter your full name"
+              />
+            </div>
+
+            <!-- Email -->
+            <div class="mb-2">
+              <label for="email" class="form-label">Email</label>
+              <input
+                type="email"
+                id="email"
+                class="form-control"
+                formControlName="email"
+                placeholder="Enter your email"
+              />
+            </div>
+
+            <!-- Phone Number -->
+            <div class="mb-2">
+              <label for="phoneNumber" class="form-label">Phone Number</label>
+              <input
+                type="text"
+                id="phoneNumber"
+                class="form-control"
+                formControlName="phoneNumber"
+                placeholder="Enter your phone number"
+              />
+            </div>
+
+            <!-- Password -->
+            <div class="mb-2">
+              <label for="password" class="form-label">Password</label>
+              <input
+                type="password"
+                id="password"
+                class="form-control"
+                formControlName="password"
+                placeholder="Enter your password"
+              />
+            </div>
+            
+            <!-- Confirm Password -->
+            <div class="mb-2">
+              <label for="confirmPassword" class="form-label">Confirm Password</label>
+              <input
+                type="password"
+                id="confirmPassword"
+                class="form-control"
+                formControlName="confirmPassword"
+                placeholder="Confirm your password"
+              />
+            </div>
+
+            <!-- Role Selection -->
+            <div class="mb-2">
+              <label for="role" class="form-label">Role</label>
+              <select
+                class="form-select"
+                id="role"
+                formControlName="role">
+                <option value="Farmer">Farmer</option>
+                <option value="Dealer">Dealer</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Error Message -->
+          <p *ngIf="errorMessage" class="text-danger text-center">{{ errorMessage }}</p>
+
+          <!-- Submit Button -->
+          <div class="d-flex flex-column justify-content-center">
+            <!-- style="background-color: #1c8073; color: white;" -->
+            <button
+              type="submit"
+              class="btn btn-success rounded-5 mb-2"
+              [disabled]="isLoading">
+              <span *ngIf="isLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+              {{ isLoading ? '' : 'Sign Up' }}
+            </button>
+          </div>
+
+          <p class="text-center small">Already have an account? <a routerLink="/login" class="text-primary text-decoration-none fw-medium">Login</a></p>
+        </form>
+      </div>
+    </div>
+
+    <!-- Image Column -->
+    <div class="col-5 d-none d-lg-block">
+      <img [src]="signupImg"
+        alt="Sign Up Image" class="w-100 h-100" style="object-fit: cover;">
+    </div>
+  </div>
+</div>

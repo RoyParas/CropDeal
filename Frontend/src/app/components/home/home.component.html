@@ -1,0 +1,60 @@
+<div class="container mt-1 text-center">
+  <!-- Introduction -->
+  <div class="container">
+    <div class="d-flex flex-lg-row flex-column-reverse align-items-center">
+      <div class="col-lg-7 text-center text-lg-start">
+        <h2 class="text-dark fs-1 mb-2">Welcome to CropDeal</h2>
+        <p class="lead text-muted fs-4 mb-6">Your trusted platform to buy and sell agricultural products directly from farms to dealers without middlemen.</p>
+        <p class="text-muted fs-6 mb-4">At CropDeal, we make the process of selling and buying crops simple, transparent, and efficient. Farmers can now sell their produce directly to the dealers without worrying about transportation costs, market commissions, or wait time.</p>
+      </div>
+
+      <div class="col-lg-5 col-6">
+        <div class="col-12">
+          <img [src]="logoWithoutbgBlackText" class="img-fluid" alt="CropDeal Logo">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Features Section -->
+  <div class="mt-5">
+    <div class="row g-4">
+      <div *ngFor="let feature of features" class="col-lg-4 col-md-6 d-flex">
+        <div class="card shadow border-1 rounded h-100">
+          <div class="card-body text-center d-flex flex-column justify-content-between">
+            <i [class]="feature.icon + ' fa-3x ' + feature.iconColor + ' mb-3'"></i>
+            <h5 class="card-title">{{feature.title}}</h5>
+            <p class="card-text text-muted">{{feature.description}}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Call to Action Section -->
+  <div class="mt-5 bg-light p-4 rounded">
+    <h3 class="h4 text-dark mb-3">Ready to Join CropDeal?</h3>
+    <p class="text-muted mb-4">Whether you're a farmer looking to sell your produce or a dealer searching for quality crops, CropDeal is the platform you need. Join us today and experience the future of agricultural trade!</p>
+    <div class="d-flex justify-content-center">
+      <a class="btn btn-success me-3" routerLink="/signup">Sign Up Now</a>
+      <a class="btn btn-primary px-4" routerLink="/login">Log In</a>
+    </div>
+  </div>
+
+  <!-- Testimonials Section -->
+  <div class="mt-5">
+    <h3 class="h4 text-dark mb-4">What Our Users Are Saying</h3>
+    <div class="row justify-content-center">
+      <div class="col-md-6 mb-4 d-flex" *ngFor="let testimonial of testimonials">
+        <div class="card shadow border-1 rounded h-100">
+          <div class="card-body d-flex flex-column justify-content-between">
+            <blockquote class="blockquote text-center">
+              <p class="mb-0">{{testimonial.quote}}</p>
+              <footer class="blockquote-footer p-4">{{testimonial.author}}</footer>
+            </blockquote>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,51 @@
+<div class="container mt-5">
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="d-flex justify-content-center align-items-center" style="height: 200px;">
+    <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <!-- Crop List -->
+  <div *ngIf="!loading">
+
+    <!-- Error Message -->
+    <div *ngIf="errorMessage" class="my-3 d-flex justify-content-between align-items-center alert alert-danger show" role="alert";>
+      {{ errorMessage }}
+    </div>
+
+    <div *ngIf="subscribedCrops.length == 0" class="d-flex justify-content-center">
+      <h4 class="text-center">No Crops have been subscribed</h4>
+    </div>
+
+
+    <!-- Table for displaying crops -->
+    <div *ngIf="subscribedCrops.length != 0" class="card shadow border rounded-4 mt-4">
+      <div class="card-body">
+        <table class="table table-hover">
+          <thead class="text-primary">
+            <tr>
+              <th scope="col" style="width: 30%;">Name</th>
+              <th scope="col" style="width: 30%;">Type</th>
+              <th scope="col" style="width: 30%;">Subscribed</th>
+              <th scope="col" class="text-center" style="width: 10%;">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let subscribedCrop of subscribedCrops" class="align-middle">
+              <td>{{ subscribedCrop.crop.name }}</td>
+              <td>{{ subscribedCrop.crop.type }}</td>
+              <td>{{ getTimeAgo(subscribedCrop.createdAt) }}</td>
+              <td class="text-center" style="white-space: nowrap;">
+                <button class="btn btn-danger btn-sm mx-2 rounded-circle shadow-sm" (click)="deleteSubscription(subscribedCrop.id)">
+                  <i class="fas fa-trash-can"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+

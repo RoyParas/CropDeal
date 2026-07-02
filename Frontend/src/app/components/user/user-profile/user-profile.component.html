@@ -1,0 +1,128 @@
+<div class="container my-4">
+  <!-- Global loading spinner -->
+  <div *ngIf="isLoading" class="d-flex justify-content-center my-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <!-- Change Password -->
+  <div class="text-end mb-3">
+    <button type="button" class="btn btn-outline-danger" (click)="navigateToChangePassword()">Change Password</button>
+  </div>
+
+  <!-- Profile Section -->
+  <div *ngIf="!isLoading" class="card mb-4">
+    <div class="card-header bg-primary text-white">
+      <h4 class="mb-0">My Profile</h4>
+    </div>
+    <div class="card-body">
+      <form [formGroup]="profileForm" class="row g-3">
+        <div class="col-md-6">
+          <label for="fullName" class="form-label">Full Name</label>
+          <input id="fullName" type="text" class="form-control" formControlName="fullName" [readonly]="!isEditProfileMode">
+        </div>
+        <div class="col-md-6">
+          <label for="email" class="form-label">Email</label>
+          <input id="email" type="email" class="form-control" formControlName="email" [readonly]="!isEditProfileMode">
+        </div>
+        <div class="col-md-6">
+          <label for="phoneNumber" class="form-label">Phone Number</label>
+          <input id="phoneNumber" type="text" class="form-control" formControlName="phoneNumber" [readonly]="!isEditProfileMode">
+        </div>
+        <div *ngIf="role === 'Farmer'" class="col-md-6">
+          <label for="averageRating" class="form-label">Average Rating</label>
+          <input id="averageRating" type="text" class="form-control" formControlName="averageRating" readonly>
+        </div>
+        <div class="col-md-6">
+          <label for="role" class="form-label">Role</label>
+          <input id="role" type="text" class="form-control" formControlName="role" readonly>
+        </div>
+        <div class="col-12">
+          <button type="button" class="btn btn-primary" (click)="toggleProfileEdit()" [disabled]="isSavingProfile">
+            <span *ngIf="isSavingProfile" class="spinner-border spinner-border-sm me-2" role="status"></span>
+            {{ isEditProfileMode ? (isSavingProfile ? 'Saving...' : 'Save') : 'Edit Profile' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Address Section -->
+  <div *ngIf="role !== 'Admin'" class="card mb-4">
+    <div class="card-header bg-primary text-white">
+      <h4 class="mb-0">Address Info</h4>
+    </div>
+    <div class="card-body">
+      <button *ngIf="!hasAddress && !showAddressForm" class="btn btn-outline-primary mb-3" (click)="showAddress()">
+        Add Address
+      </button>
+
+      <form *ngIf="hasAddress || showAddressForm" [formGroup]="addressForm" class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label">State</label>
+          <input type="text" class="form-control" formControlName="state" [readonly]="!isEditAddressMode">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">District</label>
+          <input type="text" class="form-control" formControlName="district" [readonly]="!isEditAddressMode">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">City</label>
+          <input type="text" class="form-control" formControlName="city" [readonly]="!isEditAddressMode">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Location</label>
+          <input type="text" class="form-control" formControlName="location" [readonly]="!isEditAddressMode">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Zip Code</label>
+          <input type="text" class="form-control" formControlName="zipCode" [readonly]="!isEditAddressMode">
+        </div>
+        <div class="col-12">
+          <button type="button" class="btn btn-primary me-2" (click)="toggleAddressEdit()" [disabled]="isSavingAddress">
+            <span *ngIf="isSavingAddress" class="spinner-border spinner-border-sm me-2"></span>
+            {{ isEditAddressMode ? (isSavingAddress ? 'Saving...' : 'Save') : 'Edit Address' }}
+          </button>
+          <button *ngIf="hasAddress" type="button" class="btn btn-danger" (click)="deleteAddress()">Delete Address</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Bank Info Section -->
+  <div *ngIf="role !== 'Admin'" class="card mb-4">
+    <div class="card-header bg-primary text-white">
+      <h4 class="mb-0">Bank Info</h4>
+    </div>
+    <div class="card-body">
+      <button *ngIf="!hasBankInfo && !showBankForm" class="btn btn-outline-primary mb-3" (click)="showBank()">Add Bank Account</button>
+
+      <form *ngIf="showBankForm || hasBankInfo" [formGroup]="bankForm" class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label">Bank Name</label>
+          <input type="text" class="form-control" formControlName="bankName" [readonly]="!isEditingBankInfo">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Branch Name</label>
+          <input type="text" class="form-control" formControlName="branchName" [readonly]="!isEditingBankInfo">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">IFSC Code</label>
+          <input type="text" class="form-control" formControlName="ifscCode" [readonly]="!isEditingBankInfo">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Account Number</label>
+          <input type="text" class="form-control" formControlName="accountNumber" [readonly]="!isEditingBankInfo">
+        </div>
+        <div class="col-12">
+          <button *ngIf="!hasBankInfo" type="button" class="btn btn-primary me-2" (click)="saveBankInfo()" [disabled]="isSavingBank">
+            <span *ngIf="isSavingBank" class="spinner-border spinner-border-sm me-2"></span>
+            {{ isSavingBank ? 'Saving...' : 'Save' }}
+          </button>
+          <button *ngIf="hasBankInfo" type="button" class="btn btn-danger" (click)="deleteBankInfo()">Delete Bank Info</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

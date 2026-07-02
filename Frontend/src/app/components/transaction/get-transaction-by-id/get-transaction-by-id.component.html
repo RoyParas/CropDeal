@@ -1,0 +1,189 @@
+<div class="container my-5" [ngStyle]="{ filter: openReviewForm ? 'blur(15px)' : 'none' }">
+
+  <div *ngIf="loading" class="d-flex justify-content-center align-items-center" style="height: 200px;">
+    <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <!-- Transaction Details Card -->
+  <div *ngIf="transaction"  class="card shadow border rounded-4">
+    <div class="card-header text-end">
+      <button class="btn btn-outline-primary"
+              (click)="goBack()">
+        <i class="fa-solid fa-circle-arrow-left"></i> Go Back
+      </button>
+      <button *ngIf="(getRole() !== 'Admin' && transaction?.transactionStatus === 'Completed')"
+              class="btn btn-outline-success rounded-3  mx-3"
+              (click)="getReceipt(transaction.id)">
+              <span *ngIf="downloading" class="spinner-border spinner-border-sm"></span>
+              <span *ngIf="!downloading"><i class="fa-solid fa-download"></i> Download Receipt</span>
+      </button>
+    </div>
+
+    <!-- Crop and Transaction Details -->
+    <div class="row g-0">
+      <!-- Image Section -->
+      <div class="col-md-4 d-flex align-items-center justify-content-center bg-light">
+        <img [src]="transaction.listing.imageUrl" loading="lazy" class="img-fluid p-3 rounded" [alt]="transaction.listing.crop.name" style="max-height: 200px;" />
+      </div>
+
+      <!-- Transaction Details -->
+      <div class="col-md-8">
+        <div class="card-body">
+          <div class="d-flex align-items-center">
+            <h2 class="card-title text-primary me-4">
+              {{ transaction.listing.crop.name }} <small class="text-muted">({{ transaction.listing.crop.type }})</small>
+            </h2>
+            <p class="text-secondary fw-semibold m-2"><small>Transaction Status: &nbsp;</small>
+              <span class="badge"
+                  [ngClass]="{
+                    'bg-info': transaction.transactionStatus === 'Pending',
+                    'bg-danger': transaction.transactionStatus === 'Rejected',
+                    'bg-warning': transaction.transactionStatus === 'Accepted',
+                    'bg-success': transaction.transactionStatus === 'Completed'
+                  }">
+                {{ transaction.transactionStatus }}
+              </span>
+            </p>
+          </div>
+          <p class="card-text"><strong>Dealing Price:</strong> ₹{{ transaction.finalPricePerKg }}/Kg</p>
+          <p class="card-text"><strong>Dealing Quantity:</strong> {{ transaction.quantityInKg }} Kg</p>
+          <p class="card-text"><strong>Total Price:</strong> ₹{{ transaction.totalPrice }}</p>
+          <p class="card-text"><strong>Status Updated:</strong> {{ getTimeAgo(transaction.updatedAt) }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Farmer Details -->
+    <div *ngIf="getRole() !== 'Farmer'" class="card-footer bg-white border-top pt-3">
+      <div class="d-flex align-items-start">
+        <h4 class="text-secondary me-5">Farmer Details</h4>
+        <span class="badge" [ngClass]="farmerDetails.isActive ? 'bg-success' : 'bg-secondary'">
+          {{ farmerDetails.isActive ? 'Active' : 'InActive' }}
+        </span>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <p><strong>Name:</strong> {{ farmerDetails.fullName }}</p>
+          <p><strong>Phone Number:</strong> {{ farmerDetails.phoneNumber }}</p>
+        </div>
+        <div class="col-md-6">
+          <p><strong>Email:</strong> {{ farmerDetails.email }}</p>
+          <p><strong>Role:</strong> {{ farmerDetails.role }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dealer Details -->
+    <div *ngIf="getRole() !== 'Dealer'" class="card-footer bg-white border-top pt-3">
+      <div class="d-flex align-items-start">
+        <h4 class="text-secondary me-5">Dealer Details</h4>
+        <span class="badge" [ngClass]="transaction.dealer.isActive ? 'bg-success' : 'bg-secondary'">
+          {{ transaction.dealer.isActive ? 'Active' : 'InActive' }}
+        </span>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <p><strong>Name:</strong> {{ transaction.dealer.fullName }}</p>
+          <p><strong>Phone Number:</strong> {{ transaction.dealer.phoneNumber }}</p>
+        </div>
+        <div class="col-md-6">
+          <p><strong>Email:</strong> {{ transaction.dealer.email }}</p>
+          <p><strong>Role:</strong> {{ transaction.dealer.role }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Review Details Card -->
+  <div *ngIf="review.rating != 0 && !openReviewForm" class="card mt-3 shadow-sm">
+    <div class="card-body">
+      <h5 class="card-title text-secondary">Review</h5>
+
+      <div class="d-flex flex-column flex-md-row justify-content-between col-12 col-sm-6 w-75">
+
+        <!-- Comment -->
+        <div class="d-flex">
+          <p class="me-2"><strong>Commented:</strong></p>
+          <p class="text-muted mb-0">{{ review.comment }}</p>
+        </div>
+
+        <!-- Rating -->
+        <div class="d-flex">
+          <p class="me-2"><strong>Ratings Given:</strong></p>
+          <div>
+            <i *ngFor="let star of [1,2,3,4,5]" class="bi me-1"
+              [ngClass]="{
+                'bi-star-fill text-warning': review.rating >= star,
+                'bi-star text-secondary': review.rating < star
+              }"
+              style="font-size: 1.2rem;"></i>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Transaction State Buttons and Add Review Button -->
+  <div class="my-4 text-center">
+    <button *ngIf="getRole() === 'Farmer' && transaction?.transactionStatus === 'Pending'"
+            class="btn btn-outline-success rounded-3 mx-3"
+            (click)="acceptTransaction(transaction.id)">
+      <i class="fas fa-check-circle me-1"></i> Accept
+    </button>
+    <button *ngIf="getRole() === 'Dealer' && transaction?.transactionStatus === 'Accepted'"
+            class="btn btn-outline-success rounded-3 mx-3"
+            (click)="razorPayment(transaction.id)">
+      <i class="fas fa-credit-card me-1"></i> Make Payment
+    </button>
+    <button *ngIf="(getRole() === 'Farmer' && transaction?.transactionStatus === 'Pending') ||
+            (getRole() === 'Dealer' && transaction?.transactionStatus === 'Accepted')"
+            class="btn btn-outline-danger rounded-3  mx-3"
+            (click)="rejectTransaction(transaction.id)">
+      <i class="fas fa-times-circle me-1"></i> Reject
+    </button>
+    <button *ngIf="(getRole() === 'Dealer' && transaction?.transactionStatus === 'Completed' && !openReviewForm && review.rating === 0)"
+            class="btn btn-outline-dark rounded-3  mx-3"
+            (click)="openReviewForm = true;">
+      Add Review
+    </button>
+  </div>
+
+</div>
+
+<!-- Adding Review Form -->
+<div *ngIf="openReviewForm && getRole() === 'Dealer'" class="bg-white bg-opacity-75 border rounded-4 p-4 shadow-lg"
+      style="  position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; max-width: 400px; z-index: 10;">
+  <h5 class="mb-3 text-center">Leave a Review</h5>
+
+  <div class="mb-3">
+    <label for="comment" class="form-label">Comment</label>
+    <textarea id="comment" class="form-control" [(ngModel)]="review.comment" rows="3" required></textarea>
+  </div>
+
+  <div class="mb-3 text-center">
+    <label class="form-label d-block">Rating</label>
+    <div class="d-flex justify-content-center gap-1">
+      <i *ngFor="let star of [1,2,3,4,5]" class="bi me-2"
+         [ngClass]="{
+           'bi-star-fill text-warning': review.rating >= star,
+           'bi-star text-muted': review.rating < star
+         }"
+         style="font-size: 1.5rem; cursor: pointer;"
+         (click)="review.rating = star">
+      </i>
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-between">
+    <button class="btn btn-outline-secondary" (click)="openReviewForm = false ; review.rating = 0">Cancel</button>
+    <button class="btn btn-primary"
+            [disabled]="!review.comment || !review.rating"
+            (click)="submitReview(review, transaction.id)">
+      Submit
+    </button>
+  </div>
+</div>

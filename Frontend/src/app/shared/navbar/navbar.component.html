@@ -1,0 +1,103 @@
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg shadow" >
+  <div class="container-fluid">
+    <a class="navbar-brand d-flex align-items-center" routerLink="/">
+      <img [src]="logoWithoutbgBlackText" alt="Logo" width="40" height="40">
+      CropDeal
+    </a>
+    <div class="collapse navbar-collapse">
+      <ul class="navbar-nav mx-auto">
+
+        <ng-container *ngIf="getRole() === 'Admin'">
+          <li class="nav-item"><a class="nav-link" style="color: rgb(127, 126, 126);" routerLink="admin/allowed-crops" routerLinkActive="text-black">Allowed Crops</a></li>
+          <li class="nav-item"><a class="nav-link" style="color: rgb(127, 126, 126);" routerLink="admin/all-cropList" routerLinkActive="text-black">All Listed Crops</a></li>
+          <li class="nav-item"><a class="nav-link" style="color: rgb(127, 126, 126);" routerLink="admin/all-transactions" routerLinkActive="text-black">All Transactions</a></li>
+          <li class="nav-item"><a class="nav-link" style="color: rgb(127, 126, 126);" routerLink="admin/all-users" routerLinkActive="text-black">All Users</a></li>
+          <!-- <li class="nav-item"><a class="nav-link" style="color: rgb(127, 126, 126);" routerLinkActive="text-black">Generate Report</a></li> -->
+        </ng-container>
+
+        <ng-container *ngIf="getRole() === 'Farmer'">
+          <li class="nav-item"><a class="nav-link" style="color: rgb(127, 126, 126);" routerLink="farmer/addCropToList"  routerLinkActive="text-black">Add Crop to List</a></li>
+          <li class="nav-item"><a class="nav-link" style="color: rgb(127, 126, 126);" routerLink="farmer/myListedCrops"  routerLinkActive="text-black">My Listed Crops</a></li>
+          <li class="nav-item"><a class="nav-link" style="color: rgb(127, 126, 126);" routerLink="farmer/myTransactions"  routerLinkActive="text-black">My Transactions</a></li>
+          <li class="nav-item"><a class="nav-link" style="color: rgb(127, 126, 126);" routerLink="farmer/reviews"  routerLinkActive="text-black">My Reviews</a></li>
+        </ng-container>
+
+        <ng-container *ngIf="getRole() === 'Dealer'">
+          <li class="nav-item"><a class="nav-link" style="color: rgb(127, 126, 126);" routerLink="dealer/listedCrops"  routerLinkActive="text-black">Listed Crops</a></li>
+          <li class="nav-item"><a class="nav-link" style="color: rgb(127, 126, 126);" routerLink="dealer/mySubscriptions"  routerLinkActive="text-black">My Subscriptions</a></li>
+          <li class="nav-item"><a class="nav-link" style="color: rgb(127, 126, 126);" routerLink="dealer/myTransactions"  routerLinkActive="text-black">My Transactions</a></li>
+        </ng-container>
+      </ul>
+
+      <div class="d-flex">
+        <!-- Show only when NOT logged in and page is Login or Signup-->
+        <a *ngIf="!isLoggedIn() && (isLoginPage() || isSignUpPage())"
+          class="btn me-2"
+          (click)="goBack()"
+          [ngClass]="isLoginPage() ? 'btn-outline-primary':'btn-outline-success'"
+        ><i class="fa-solid fa-circle-arrow-left me-2"></i>Go Back</a>
+
+        <!-- Show only when NOT logged in and page is Signup-->
+        <a *ngIf="!isLoggedIn() && !isLoginPage()" class="btn btn-outline-primary me-2" routerLink="/login">Login</a>
+
+        <!-- Show only when NOT logged in and page is Login-->
+        <a *ngIf="!isLoggedIn() && !isSignUpPage()" class="btn btn-outline-success me-2" routerLink="/signup">Signup</a>
+
+        <!-- Show only when logged in -->
+        <div class="dropdown me-4 d-flex align-items-center position-relative" *ngIf="getRole() == 'Dealer' && isLoggedIn()">
+          <!-- Notification Icon -->
+          <button class="btn btn-link p-0 border-0 position-relative" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false" (click)="notificationClicked = !notificationClicked ">
+            <i class="fa-bell fs-5 text-muted" [ngClass]="notificationClicked ? 'fa-regular' : 'fa-solid'"></i>
+            <span *ngIf="notifications.length != 0" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.65rem;">{{notifications.length}}</span>
+          </button>
+
+          <!-- Dropdown menu -->
+          <ul class="dropdown-menu dropdown-menu-end mt-2 shadow-sm rounded-3" aria-labelledby="notificationDropdown" style="max-width: 370px; ">
+            <div class="py-1 px-2 d-flex justify-content-between align-items-center">
+              <li class="fw-bold text-dark">Notifications</li>
+            </div>
+            <div style="max-height: 200px; overflow-y: scroll;">
+              <li *ngFor="let notification of notifications">
+                <hr class="dropdown-divider">
+                <div class="px-2 d-flex justify-content-around align-items-start">
+                  <div class="me-2 small text-wrap" style="width: 350px;">
+                    {{ notification.message }}
+                  </div>
+                  <button
+                    class="btn btn-sm p-0 px-2"
+                    (click)="deleteNotification(notification.id)">
+                    <i class="fa-regular fa-trash-can fa-lg text-danger"></i>
+                  </button>
+                </div>
+              </li>
+            </div>
+            <!-- <li><a class="dropdown-item text-center text-primary small" href="#">View all</a></li> -->
+          </ul>
+        </div>
+
+
+        <div class="dropdown me-3 d-flex align-items-center" *ngIf="isLoggedIn()">
+          <button class="btn border-0 p-1" id="userDropdown" data-bs-toggle="dropdown">
+            <i class="fa-regular fa-circle-user fa-xl me-1 text-muted"></i>
+            <i class="fa-solid fa-caret-down fa-xs text-muted" ></i>
+          </button>
+          <div class="dropdown-menu dropdown-menu-end mt-2 shadow rounded-3" aria-labelledby="userDropdown">
+            <a 
+              class="dropdown-item" 
+              style="background-color: transparent; box-shadow: none; outline: none; color: inherit;"
+              [routerLink]="['/', getRole()?.toLowerCase(), 'myProfile']">
+              <i class="fas fa-user-circle text-primary"></i>&nbsp; My Profile
+            </a>
+            <button 
+              class="dropdown-item text-danger" 
+              style="background-color: transparent; box-shadow: none; outline: none;" 
+              (click)="logout()">
+              <i class="fas fa-sign-out-alt"></i>&nbsp; Logout
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
